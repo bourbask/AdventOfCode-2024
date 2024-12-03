@@ -1,5 +1,6 @@
 #!/bin/bash
 
+source ../common/utils.sh
 source ../common/extract_input.sh
 
 ##########################
@@ -35,21 +36,45 @@ done
 # Process adjacent levels in reports #
 ######################################
 
+safe_reports_count="$reports_count"
+
 for ((i=0; i<reports_count; i++)); do
   levels=(${report_arrays["report_$i"]})
   levels_count=${#levels[@]}
-  
+  isIncreasing=""
+
   echo "Processing Report $((i + 1)) with ${levels_count} levels: ${levels[@]}"
 
   for ((j=0; j<levels_count-1; j++)); do
     current_level=${levels[j]}
     next_level=${levels[j+1]}
-    
-    # Example processing: Check if the next level is greater than the current level
-    if (( next_level > current_level )); then
-      echo "Level $current_level is followed by a greater level $next_level"
-    else
-      echo "Level $current_level is followed by a smaller or equal level $next_level"
+
+    if (( current_level == next_level )); then
+      ((safe_reports_count--))
+      break
+    fi
+
+    # Determine the increasing or decreasing trend
+    if [ -z "$isIncreasing" ]; then
+      if (( current_level < next_level )); then
+        isIncreasing=true
+      else
+        isIncreasing=false
+      fi
+    elif { [ "$isIncreasing" = "true" ] && (( current_level >= next_level )); } || \
+         { [ "$isIncreasing" = "false" ] && (( current_level < next_level )); }; then
+      ((safe_reports_count--))
+      break
+    fi
+
+    abs_diff=$(absolute $((current_level - next_level)))
+
+    if (( abs_diff < 1 || abs_diff > 3 )); then
+      ((safe_reports_count--))
+      break
     fi
   done
 done
+
+# Output safe_reports_count
+echo "Number of safe reports: $safe_reports_count"
