@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# Retrieve inputs from file
-input_file="./input.txt"
+source ../common/extract_input.sh
 
 # Get relevant values using regex
 get_ids_from_input=$(grep -oE '[0-9]+' "$input_file")
