@@ -1,5 +1,6 @@
 #!/bin/bash
 
+source ../common/utils.sh
 source ../common/extract_input.sh
 
 # Get relevant values using regex
@@ -40,14 +41,6 @@ echo "Number of elements in sorted list2: ${#sorted_list2[@]}"
 #################################
 # Measure length between tuples #
 #################################
-
-absolute() {
-  if [ "$1" -lt 0 ]; then
-    echo $((-1 * $1))
-  else
-    echo "$1"
-  fi
-}
 
 length=0
 
